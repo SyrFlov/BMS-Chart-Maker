@@ -1285,12 +1285,12 @@ def on8_match(t_chart, masks, bpm: float, strength: float = 1.0, seed: int = 0, 
     return masks, changed
 
 
-OFF_HUMAN = {1: 0.36, 2: 0.47, 3: 0.15, 4: 0.02}    # lv20 13개: 16분 연타 속 뒷자리(16분 사이 칸) 줄 건반 수
+OFF_HUMAN = {1: 0.36, 2: 0.47, 3: 0.15, 4: 0.02}    # ★20 13개: 16분 연타 속 뒷자리(16분 사이 칸) 줄 건반 수
 
 
 def off_match(t_chart, masks, bpm: float, strength: float = 1.0, seed: int = 0, jack_ms: float = 100.0,
               target=None):
-    """16분 연타 속 뒷자리 줄 건반 수를 lv20 분포(1개 36% / 2개 47% / 3개 15% / 4개 2%)로 올림 (--off-match)
+    """16분 연타 속 뒷자리 줄 건반 수를 ★20 분포(1개 36% / 2개 47% / 3개 15% / 4개 2%)로 올림 (--off-match)
     반환: (masks, 더한 줄 수)"""
     t = np.asarray(t_chart, dtype=np.float64)
     masks = [int(m) for m in masks]
@@ -1450,7 +1450,7 @@ def trip_match(t_chart, masks, bpm: float, strength: float = 1.0, seed: int = 0,
 
 # ---------------------------------------------------------------------------
 # 폭타 뼈대 / 마디 반복 / 대각선 (--skel-swap, --bar-repeat, --diag)
-# 사람 lv20 34개 vs 생성 5곡, shape_stats.py 기준 중앙값:
+# 사람 ★20 34개 vs 생성 5곡, shape_stats.py 기준 중앙값:
 #   폭타 속 8분 자리 > 바로 뒤 뒷자리 69% / 생성 40%, 뒷자리가 더 두꺼움 3% / 26%
 #   한 마디 전 같은 칸 건반 수 같음 62% / 34%, 모양 같음 13% / 3%, 닮은 모양(반전, 평행이동 포함) 31% / 11%
 # ---------------------------------------------------------------------------
@@ -1679,7 +1679,7 @@ def fine_single(t_chart, masks, bpm: float, target: float = 0.9, strength: float
     return masks, n, len(rows)
 
 
-# 277곡 단타 5줄+ 연속(916곳)으로 다시 잼. 예전 lv20 13곡 값은
+# 277곡 단타 5줄+ 연속(916곳)으로 다시 잼. 예전 ★20 13곡 값은
 # 좁은 자리 반복(432432), 좌우 교대가 사람보다 몇 배 많았음
 FINE_SHAPES = {"stair": 0.56, "alt": 0.07, "zig": 0.02, "narrow": 0.04, "none": 0.31}
 # 계단 계열을 고를 확률은 간격마다 다르게, 나머지는 위 비율대로 나눔
@@ -2107,7 +2107,7 @@ def section_dyn(t_chart, masks, bpm: float, meas_loud, strength: float = 1.0, se
 
 # ---------------------------------------------------------------------------
 # 폭타 끝 묵직하게 다시 (--end-fat, --end-over) / 8비트 동시치기 이어짐 방식 (--eighth-trans)
-# 폭타 끝(16분 3줄+ 뒤 8분 이상 쉼) 사람 277 / lv20: 끝 줄 >= 앞 1박 8분 자리 최대 66 / 61%, > 21 / 12%, 4건반+ 31%
+# 폭타 끝(16분 3줄+ 뒤 8분 이상 쉼) 사람 277 / ★20: 끝 줄 >= 앞 1박 8분 자리 최대 66 / 61%, > 21 / 12%, 4건반+ 31%
 # 같은 개수 동시치기가 8분~1박 간격으로 이어질 때: 그대로 10/5, 하나만 이동 16/9, 여럿 바뀜 29/24,
 # ---------------------------------------------------------------------------
 def stream_end_fat(t_chart, masks, bpm: float, strength: float = 1.0, seed: int = 0, max_chord: int = 7,
@@ -2615,7 +2615,7 @@ def eighth_shape(t_chart, masks, bpm: float, strength: float = 1.0, seed: int = 
 
 
 # ---------------- 1, 7번 축 풀기 ----------------
-# 8분 자리 3줄 연속 같은 건반(축) 중 1, 7번 비율: 사람 277 39% / lv20 37% / 생성 54%
+# 8분 자리 3줄 연속 같은 건반(축) 중 1, 7번 비율: 사람 277 39% / ★20 37% / 생성 54%
 # 1, 7번 사용량은 비슷(36 vs 33%)한데 1, 7번이 몇 줄씩 이어져 양 끝 기둥처럼 보임. 축 수 자체는 생성이 더 적음(38 vs 52/100줄)
 def _edge_axis_once(t_chart, masks, bpm: float, strength: float = 1.0, seed: int = 0, jack_ms: float = 100.0,
                     target: float = 0.40):
@@ -2709,7 +2709,7 @@ def edge_axis(t_chart, masks, bpm: float, strength: float = 1.0, seed: int = 0, 
 
 # ---------------- 폭타 8분+16분 쌍 합 일정하게 ----------------
 # 바쁜 마디(16분 칸 8+/16)에서 '8분 자리 줄 + 바로 뒤 16분 줄' 건반 합의 마디 안 표준편차:
-# 사람 lv20 0.71 / 생성 0.93. 사람 폭타는 쌍 합이 5, 6처럼 거의 일정하게 이어짐.
+# 사람 ★20 0.71 / 생성 0.93. 사람 폭타는 쌍 합이 5, 6처럼 거의 일정하게 이어짐.
 def pair_even(t_chart, masks, bpm: float, strength: float = 1.0, seed: int = 0, max_chord: int = 6,
               jack_ms: float = 100.0, min_fill: int = 8, pair_min: int = 0, targets=None, keep_var: bool = False):
     """바쁜 마디마다 쌍 합을 그 마디 중앙값(목표)에 맞춘다
@@ -3533,7 +3533,7 @@ def section_break_pick(t_chart, row_prob, bpm: float, target: float = 0.64, min_
         if p - first_s < 4 or last_s - (p + 3) < 4:              # 곡 첫, 끝 폭타 4마디는 남김
             continue
         if fine_cnt and sum(fine_cnt.get(x, 0) for x in bl) >= fine_min:
-            continue                                             # 같은 박 자리에 24, 32, 셋잇단이 되풀이되는 악절은 리듬이 핵심 (RATATA 훅)
+            continue                                             # 같은 박 자리에 24, 32, 셋잇단이 되풀이되는 악절은 리듬이 핵심
         phrases[p] = float(np.mean([r_sc[x] + r_ld[x] for x in bl])) - 0.5 * r_nv.get(p, 0.0)
     if not phrases:
         return []

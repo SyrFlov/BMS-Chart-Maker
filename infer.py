@@ -452,7 +452,7 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
         frames, n_f32 = _f32m.fill32(probs, frames, bpm, fill32_low, stems=st_f32, ratio=fill32_sound if st_f32 is not None else 0.0)
         print(f"16비트 이상 채우기(--fill32 {fill32_low:g}): 16분·8분 셋잇단 두 노트 사이 약한 봉우리 {n_f32}개를 32분·24분으로 더함 ({n0} -> {len(frames)})"
               + (f" | 채움 소리 확인(--fill32-sound {fill32_sound:g}): 그 자리에 분리 소리(드럼·베이스·악기·보컬) 어택이 없는 {_f32m.LAST_SKIP}개는 안 더함"
-                 f" (M109 채움 노트 중 어택 있는 비율 NEON 29%·DIAVOLO 46%, 일반 노트 67~98%)" if st_f32 is not None else
+                 f" (채움 노트 중 어택 있는 비율 29~46%, 일반 노트 67~98%)" if st_f32 is not None else
                  (" | 채움 소리 확인: 저장해 둔 분리 소리가 없어 확인 없이 채움" if fill32_sound > 0 else "")))
     nlog = None
     if note_log:
@@ -766,7 +766,7 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
                 else:
                     grade_ = ""
                 print(f"폭타 잇기(--stream-fill {stream_fill:g}): 16분 칸이 {stream_fill:g}/16 이상 찬 마디 {n_meas_f}개의 빈 16분 칸 "
-                      f"{len(add_)}개를 채움 (사람 lv20 바쁜 마디 16칸 다 참 48% / 생성 p71 3%)" + grade_)
+                      f"{len(add_)}개를 채움 (사람 ★20 바쁜 마디 16칸 다 참 48% / 생성 3%)" + grade_)
         def _row_peak_p():
             # 줄마다 노트 시각 모델 확률 = 원래 봉우리 프레임 앞뒤 3프레임 중 최대 (_rows.csv와 같은 격자 이동 보정).
             # 예전에는 격자에 붙인 시각에서 읽어서, 늦게 찍히는 곡은 확실한 소리(0.7~0.97)도
@@ -1192,7 +1192,7 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
                               jack_ms=no_jack_ms if no_jack_ms > 0 else 100.0, target=tg_om)
             print(f"폭타 속 8분 자리 두께를 사람 분포로(--on8-match {on8_match:g}): {n_om}줄에서 건반 하나씩 빼거나 더함 "
                   + (("(울타리 --guard: 사람 곡별 10~90% 범위 밖만, 목표 " + " / ".join(f"{k}{'+' if k == 5 else ''}개 {v:.0%}" for k, v in tg_om.items()) + ")")
-                     if tg_om else "(lv20 기준 1개 4% / 2개 24% / 3개 44% / 4개 24% / 5+ 4%)"))
+                     if tg_om else "(★20 기준 1개 4% / 2개 24% / 3개 44% / 4개 24% / 5+ 4%)"))
         if off_match > 0:
             from thick_ctl import off_match as _ofm
             tg_of = None
@@ -1201,7 +1201,7 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
                 tg_of = guard_off_target(t_chart, masks, bpm)
             masks, n_ofm = _ofm(t_chart, masks, bpm, off_match, seed, jack_ms=no_jack_ms if no_jack_ms > 0 else 100.0,
                                 target=tg_of)
-            print(f"폭타 뒷자리 두께를 lv20 분포로(--off-match {off_match:g}): {n_ofm}줄에 건반 하나씩 더함 "
+            print(f"폭타 뒷자리 두께를 ★20 분포로(--off-match {off_match:g}): {n_ofm}줄에 건반 하나씩 더함 "
                   + (("(울타리 --guard: 사람 곡별 10~90% 범위 밖만, 목표 " + " / ".join(f"{k}개 {v:.0%}" for k, v in tg_of.items()) + ")")
                      if tg_of else "(1개 36% / 2개 47% / 3개 15%, 큰동치-단타 교대 줄임)"))
         masks, n_pf = _pf(t_chart, masks, bpm, pillar_fix, seed, jack_ms=no_jack_ms if no_jack_ms > 0 else 100.0) \
@@ -1231,14 +1231,14 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
         masks, n_bc = _bc(t_chart, masks, bpm, beat_contrast, seed)
         e1, o1 = beat_sizes(t_chart, masks, bpm)
         print(f"8분 자리 두껍게/뒷자리 얇게(--beat-contrast {beat_contrast:g}): {n_bc}줄 | 16분 연타 평균 건반 8분 자리 {e0:.2f}/뒷자리 {o0:.2f}"
-              f" -> {e1:.2f}/{o1:.2f} (사람 중앙값 2.69/1.61, Chronomia presea 2.40/1.44)")
+              f" -> {e1:.2f}/{o1:.2f} (사람 중앙값 2.69/1.61)")
     if beat_mode and denim_max > 0 and lane_fn is not None:
         from thick_ctl import denim_cap, denim_runs
         d0 = denim_runs(t_chart, masks, bpm)
         masks, n_dc = denim_cap(t_chart, masks, bpm, lo=min(4, denim_max), hi=denim_max, seed=seed)
         d1 = denim_runs(t_chart, masks, bpm)
         print(f"데님(2개 동시치기 16분 연속) 끊기(--denim-max {denim_max}): {n_dc}곳 | 가장 긴 데님 {max(d0, default=0)}줄 -> "
-              f"{max(d1, default=0)}줄 (사람 곡별 최장 중앙값 7.5줄, presea 8줄)")
+              f"{max(d1, default=0)}줄 (사람 곡별 최장 중앙값 7.5줄)")
     if beat_mode and section_dyn > 0 and lane_fn is not None and mel is not None and len(frames) == len(masks):
         # 구간 강약 - 조용한 구간은 얇게, 큰 구간은 두껍게 (16, 8, 4, 2비트 모두)
         from thick_ctl import section_dyn as _sdy, section_loudness
@@ -1388,7 +1388,7 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
                   f"(사람 lv16~20 곡 평균 2.65~4.63, 곡 안 폭 약 2.6, 묶음 안 표준편차 0.4)")
         if n_pe:
             print(f"폭타 쌍 합 고르게(--pair-even {pair_even:g}): {n_pe}줄 | 바쁜 마디 안 '8분+16분' 건반 합 표준편차 "
-                  f"{pe0:.2f} -> {pe1:.2f} (사람 lv20 0.71, Air -GOD- 0.60)"
+                  f"{pe0:.2f} -> {pe1:.2f} (사람 ★20 0.71)"
                   + (f" | 목표 최소 {pair_min} (마디 중앙값 +1까지, --pair-min)" if pair_min > 0 else ""))
     if beat_mode and end_fat > 0 and lane_fn is not None:
         # 폭타 끝 줄을 앞 1박 8분 자리 최대 이상으로, 끝 줄만 상한 + end_over 허용
@@ -1662,7 +1662,7 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
         masks, n_ea, (ea0, ea1) = _eax(t_chart, masks, bpm, edge_axis, seed, jack_ms=jk)
         if n_ea:
             print(f"1·7번 축 풀기(--edge-axis {edge_axis:g}): 건반 {n_ea}개를 안쪽으로 | 축 중 1·7번 {ea0:.0%} -> {ea1:.0%} "
-                  f"(사람 277 39% / lv20 37%)")
+                  f"(사람 277 39% / ★20 37%)")
     if beat_mode and quarter_spread > 0 and lane_fn is not None:
         # 4비트 세 줄이 한쪽 손 안에서 가운데 -> 끝으로 밀려가는 모양(5 4 47)을 반대쪽 손으로 (사람 1.3%)
         from thick_ctl import quarter_drift as _qd
@@ -1784,7 +1784,7 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
         masks, n_sc = add_scratch(t_chart, frames, masks, mel, bpm, scratch_add, seed, pos_weight=scratch_pos)
         if n_sc:
             print(f"스크래치 채우기(--scratch-add {scratch_add:g}/마디): {n_sc0}줄 -> {n_sc0 + n_sc}줄 "
-                  f"(lv20 마디당 0.96, 저·중음이 센 8분 격자 줄에)")
+                  f"(★20 마디당 0.96, 저·중음이 센 8분 격자 줄에)")
     if lane_fn is not None and max_chord < 7:
         from thick_ctl import chord_cap
         masks, n_cc = chord_cap(t_chart, masks, max_chord, seed, allow=end_allow)
@@ -2044,7 +2044,7 @@ def main() -> None:
                     help="스크래치 빈도 조절 (레인 모델 v2). 숫자가 클수록 스크래치가 많아짐. "
                          "1이면 약 2.5배, 0.5면 약 1.6배, 음수면 줄어듦. 0이면 그대로")
     ap.add_argument("--scratch-pos", type=float, default=1.0,
-                    help="스크래치 자리 가중치 세기 (lv20 기준). 앞 1박 안에 스크래치가 없으면(처음 놓는) 첫 박 1 / 4박 0.46 / 2박 0.32 / "
+                    help="스크래치 자리 가중치 세기 (★20 기준). 앞 1박 안에 스크래치가 없으면(처음 놓는) 첫 박 1 / 4박 0.46 / 2박 0.32 / "
                          "3박 0.24 / 8분 뒷박 0.04 / 16분 0.01, 있으면(이어 치는) 첫 박 1 / 4박 0.91 / 3박 0.7 / 2박 0.38 / 8분 0.28 / 16분 0.18을 "
                          "스크래치 확률(오즈)에 곱함 (1 = 그대로, 2 = 제곱이라 더 강하게, 0 = 끔). 레인 모델과 --scratch-add 둘 다")
     ap.add_argument("--coverage", type=float, default=0.0,
@@ -2063,7 +2063,7 @@ def main() -> None:
                     help="계획 온도: 낮을수록 계획 모델이 가장 그럴듯하다고 본 모양으로, 1이면 평균적으로")
     ap.add_argument("--max-alt-rows", type=int, default=3,
                     help="묶음 교대(1357/246, 1245/367, 13/24 등 A-B-A-B)를 최대 몇 줄까지 허용할지. "
-                         "presea는 최장 3줄(A-B-A), 2면 A-B-A도 막음. 0이면 제한 없음")
+                         "참고한 사람 패턴은 최장 3줄(A-B-A), 2면 A-B-A도 막음. 0이면 제한 없음")
     ap.add_argument("--alt-scale", type=float, default=1.0,
                     help="v4: 계획 모델이 정한 교대 비율에 곱하는 값 (0이면 교대 계획 없음)")
     ap.add_argument("--lone-scratch", action="store_true",
@@ -2118,7 +2118,7 @@ def main() -> None:
                     help="16분 연타에서 뒷자리 줄이 양옆 8분 줄보다 얇지 않으면 이 확률로 얇게 (사람처럼 센 줄-약한 줄 대비). 0이면 끔")
     ap.add_argument("--flow", type=float, default=0.0,
                     help="16분 연타 속 8분 자리 동시치기가 방향을 바꾸려 할 때 이 확률로 같은 방향 계단으로 (75 64 -> 53). "
-                         "소리가 같으면 안 바꿈. 0.35면 같은 방향 비율 19%%->27%% (presea 20%%, SA 28%%). 0이면 끔")
+                         "소리가 같으면 안 바꿈. 0.35면 같은 방향 비율 19%%->27%% (사람 패턴 20~28%%). 0이면 끔")
     ap.add_argument("--thin-boost", type=float, default=0.7,
                     help="--thin-weak로 16분 뒷자리를 뺀 자리 바로 옆 8분 자리 동시치기에 이 확률로 건반 하나를 더함 "
                          "(16분이 8분이 된 곳을 묵직하게, 연타 금지 지킴). --thin-weak를 안 쓰면 아무 일 없음. 0이면 끔")
@@ -2183,7 +2183,7 @@ def main() -> None:
                     help="16분 간격에서 뒷줄이 앞 줄(2개+)을 그대로 품고 건반을 더한 모양(45 -> 457)을 풂 (사람 0.1%%). 0이면 끔")
     ap.add_argument("--pair-even", type=float, default=1.0,
                     help="바쁜 마디(16분 칸 8+/16)에서 '8분 자리 줄 + 바로 뒤 16분 줄' 건반 합을 마디 중앙값으로 고르게: 2 이상 벗어나면 "
-                         "1 안으로, 1 벗어나면 절반 확률로 맞춤 (사람 마디 안 표준편차 lv20 0.71 / Air -GOD- 0.60, 생성 0.93). 0이면 끔")
+                         "1 안으로, 1 벗어나면 절반 확률로 맞춤 (사람 마디 안 표준편차 ★20 0.71, 생성 0.93). 0이면 끔")
     ap.add_argument("--placer-ckpt", default="",
                     help="자리 모델(patch78) 체크포인트. 기본: infer.py 옆 checkpoints/placer_v1.pt가 있으면 그것, 'none'이면 안 씀")
     ap.add_argument("--placer", type=float, default=1.0,
@@ -2200,7 +2200,7 @@ def main() -> None:
     ap.add_argument("--pair-spread", type=float, default=None, help=argparse.SUPPRESS)   # 옛 이름 (폭 = 2 x 편차)
     ap.add_argument("--pair-min", type=int, default=5,
                     help="--pair-even 목표 쌍 합의 최소값: 마디 중앙값이 이보다 작으면 중앙값 +1까지 올림 "
-                         "(Air -GOD- 5~6, 사람 lv20 평균 4.6, 기본 5, 0이면 중앙값 그대로)")
+                         "(사람 ★20 평균 4.6, 기본 5, 0이면 중앙값 그대로)")
     ap.add_argument("--edge-axis", type=float, default=1.0,
                     help="1·7번 축(8분 자리 3줄 연속 같은 건반)이 축 전체의 40%%(사람 37~39%%)를 넘으면 가운데 줄의 1·7을 "
                          "가까운 안쪽 빈 건반(2·3 / 6·5)으로 옮기는 확률. 0이면 끔")
@@ -2220,19 +2220,19 @@ def main() -> None:
                          "32·24분 앞뒤 16분 뒷자리 줄에서 덜어냄 (기본 1, 0이면 끔)")
     ap.add_argument("--placer-rep", type=float, default=0.45,
                     help="자리 모델 반복 억제: 두 줄 간격으로 같은 조합(1 _ 1 _ 1 기둥, A B A B 교대)이 이어질수록 덜 고르게 하는 세기 "
-                         "(사람 277곡: 두 줄 전 그대로 8%%, 최장 6번 / 억제 없이 theHole 18~39%%, 최장 32번, 기본 0.45, 0이면 모델 그대로)")
+                         "(사람 277곡: 두 줄 전 그대로 8%%, 최장 6번 / 억제 없이 생성 18~39%%, 최장 32번, 기본 0.45, 0이면 모델 그대로)")
     ap.add_argument("--stream-break", type=int, default=16,
                     help="16분 폭타 마디가 이 마디 수보다 길게 쉬지 않고 이어지면, 그 안에서 16분 뒷자리 소리가 약한 마디를 골라 "
                          "8비트 동시치기 마디(건반 수 = 주변 폭타의 0.76배)로 바꿈 (사람 277곡 폭타 최장 연속 중앙값 17마디, 기본 16, 0이면 끔)")
     ap.add_argument("--stream-target", type=float, default=0.64,
                     help="곡 전체에서 16분 폭타 마디 비율이 이 값을 넘으면 4~8마디 악절을 통째로 8비트 동시치기 구간(건반 수 = 주변 폭타의 0.5배)으로 바꿈 "
-                         "(사람 256곡: 폭타 위주 곡 중앙값 64%%, 폭타 아닌 마디의 81%%가 4마디+ 덩어리 / 생성 EOS 79%%, 기본 0.64, 0이면 끔)")
+                         "(사람 256곡: 폭타 위주 곡 중앙값 64%%, 폭타 아닌 마디의 81%%가 4마디+ 덩어리 / 생성 79%%, 기본 0.64, 0이면 끔)")
     ap.add_argument("--stream-kpr", type=float, default=0.0,
-                    help="16분 폭타 마디 줄당 건반을 이 값까지 올림, 소리 큰 마디일수록 두껍게 (사람 중앙값 2.28 / 생성 EOS 1.98). "
+                    help="16분 폭타 마디 줄당 건반을 이 값까지 올림, 소리 큰 마디일수록 두껍게 (사람 중앙값 2.28 / 생성 1.98). "
                          "patch93: 기본 0(끔) - 켜면 얇은·두꺼운 폭타 차이가 지워짐(마디별 줄당 편차 사람 0.43 / 켬 0.19 / 끔 0.48)")
     ap.add_argument("--accent-rest", type=float, default=1.0,
                     help="치고 쉬기: 폭타 중 큰 소리(앞 2박 보통 세기의 2배+) 뒤 소리가 잦아들면(뒤 1박이 그 소리 0.6배 이하이면서 앞 폭타 보통 세기 이하) "
-                         "그 소리를 동시치기로 치고 뒤 --accent-rest-len박을 쉼 (flicknote 075·083마디, 기본 1, 클수록 더 자주, 0이면 끔)")
+                         "그 소리를 동시치기로 치고 뒤 --accent-rest-len박을 쉼 (기본 1, 클수록 더 자주, 0이면 끔)")
     ap.add_argument("--accent-rest-len", type=float, default=1.0,
                     help="치고 쉬기에서 큰 소리 뒤 쉬는 길이(박). 다음 줄은 이만큼 뒤에 옴 (patch95: 0.75 -> 1, 사용자 '1박 쉬는 게 나음')")
     ap.add_argument("--pair-keep", type=float, default=1.0,
@@ -2240,26 +2240,26 @@ def main() -> None:
                          "(사람 마디 안 표준편차 0.71 / 0일 때 0.33 -> 꽉 찬 박 건반 수 패턴이 2-1-2-1로 몰림, 기본 1, 0이면 모든 쌍을 목표 쪽으로 맞춤)")
     ap.add_argument("--fine-grid", type=float, default=1.0,
                     help="24·32비트(셋잇단·32분) 격자 허용 (patch107: --fine-bpm이 켜져 있으면 자동은 박마다 BPM대 문턱으로, 아래는 --fine-bpm 0일 때): 곡 전체에서 옆 박도 같은 계열인 셋잇단·32분 박이 곡 박의 4%% 이상일 때만 그 계열을 쓰고 "
-                         "혼자 떨어진 박은 16분으로 (barijung 140: 셋잇단 2.8%% / 32분 1.2%% -> 16분 폭타로, DIAVOLO·REDRED 셋잇단 12~16%% -> 남김). "
+                         "혼자 떨어진 박은 16분으로. "
                          "격자 보정(--snap-fix)도 그 박 격자 안에서만. 0 = 16분만(--fill32도 끔), 1 = 자동(기본), 0~1은 더 엄하게, 1~2는 느슨하게, 2 = 다 허용(박마다 고른 분할을 거르지 않음)")
     ap.add_argument("--dens-flat", type=float, default=1.0,
                     help="소리 폭 맞춤(patch108): 구간 밀도 분포(--dens-shape)의 목표를 곡 소리 폭(마디 소리 크기 10~90%% 폭)이 비슷한 사람 곡 분포로 - "
                          "소리 편차가 적은 곡은 가벼운 구간도 덜 가볍게(사람 소리 폭 0.065 미만 곡: 2마디 묶음 하위 10%% 최고의 0.38배, 0.12 이상 곡 0.18배) "
-                         "+ 줄보다 건반부터 덜어 듬성듬성 대신 조금 쉬는 폭타로 (REDRED 소리 폭 0.057). 1 = 켬(기본), 0 = 소리 폭과 상관없이 모든 곡에 같은 분포(하위 10%% 묶음 0.22배), 줄 빼기 비중도 그대로")
+                         "+ 줄보다 건반부터 덜어 듬성듬성 대신 조금 쉬는 폭타로. 1 = 켬(기본), 0 = 소리 폭과 상관없이 모든 곡에 같은 분포(하위 10%% 묶음 0.22배), 줄 빼기 비중도 그대로")
     ap.add_argument("--bass-sound", type=float, default=0.4,
                     help="소리에 베이스 넣기(patch109): 마디 소리 크기 순위 = 멜 전체 (1-값) + 저음(멜 0~10번 대역) 값 (곡 안 z값). "
                          "폭타 구간 고르기·악절 종류·사다리 단계·반쯤 빈 마디 채우기·쉬는 동시치기 크기에 씀 "
-                         "(EOS 029~036 멜 순위 0.36 / 저음 0.85 - 베이스 16분이 큰데 1+1 얇은 폭타였음 -> 0.49~0.50 = 2+1, "
+                         "("
                          "사람 277개 0.3~0.4가 가장 잘 맞음: 폭타 마디 가르기 AUC 0.767 -> 0.775). 0 = 멜 전체만")
     ap.add_argument("--dens-dev", type=float, default=1.0,
                     help="편차 기준(patch109): 구간 밀도 분포(--dens-shape) 목표를 곡 안 순위 대신 '곡 큰 소리보다 얼마나 작은가'로 "
                          "(사람 277개 묶음 밀도 예측 오차 순위 0.176 / 소리 폭 0.169 / 편차 0.156, 큰 소리 근처는 순위 기준 목표보다 안 낮춤). 1 = 켬(기본), 0 = 끔(곡 안 순위로 목표)")
     ap.add_argument("--dens-pulse", type=float, default=1.0,
                     help="8분 박 지키기(patch109): 분리 소리(저장해 둔 <이름>_stems.npz) 드럼·베이스·악기에 8분 박 어택이 6/8칸+인 마디는 "
-                         "구간 밀도 분포가 8분 뒷자리 줄을 통째로 빼지 않고 건반만 덞 (EOS M106 시작 4분 단타 -> 8분). 1 = 켬(기본), 0 = 끔")
+                         "구간 밀도 분포가 8분 뒷자리 줄을 통째로 빼지 않고 건반만 덞. 1 = 켬(기본), 0 = 끔")
     ap.add_argument("--fill32-sound", type=float, default=0.0,
                     help="채움 소리 확인(patch110): 16비트 이상 채우기(--fill32)가 더할 자리에 분리 소리(저장해 둔 <이름>_stems.npz) 드럼·베이스·악기·보컬 중 "
-                         "어느 층에든 어택(주변 대비 이 값 배 이상)이 있을 때만 더함 - M109 채움 노트 중 어택 있는 비율 NEON 29%%·DIAVOLO 46%% "
+                         "어느 층에든 어택(주변 대비 이 값 배 이상)이 있을 때만 더함 - 채움 노트 중 어택 있는 비율 29~46%% "
                          "(일반 노트 67~98%%, 큰 소리 바로 뒤 잔향 같은 봉우리). 높을수록 엄격, 권장 1.5, 0 = 끔(기본, 확인 안 함 - 사용자: 선택해서 쓰게)")
     ap.add_argument("--chord32", type=float, default=0.0,
                     help="약한 32비트 동시치기로(patch110): 32분 뒷자리(박의 1/8·3/8·5/8·7/8) 줄 중 모델 확률이 이 값 미만(약하게 들린 즈레)인 것을 "
@@ -2280,8 +2280,8 @@ def main() -> None:
                          "넘친 묶음만 줄임 - 폭타 마디는 안 건드리고(두께는 --stream-lift), 폭타 아닌 곳에서 조용한 묶음은 줄(박 단위 16분 뒷자리), 센 묶음은 건반 위주. "
                          "1 = 사람 기준(기본), 0 = 끔, 0~1은 넘친 만큼의 일부만")
     ap.add_argument("--dens-cap", type=float, default=0.0,
-                    help="구간 밀도 분포의 최고 밀도 상한(초당 노트, 스크래치 포함). 이보다 진한 묶음은 여기까지 (사람 최고 중앙값 31, 상위 25%% 33, "
-                         "p94 Chronomia·Cthugha 40). 기본 0 = 상한 없음 (사용자: 최고 밀도는 건들지 마)")
+                    help="구간 밀도 분포의 최고 밀도 상한(초당 노트, 스크래치 포함). 이보다 진한 묶음은 여기까지 (사람 최고 중앙값 31, 상위 25%% 33). "
+                         "기본 0 = 상한 없음")
     ap.add_argument("--stream-lift", type=float, default=1.0,
                     help="폭타 두께 사람 분포로: 폭타 마디(16분 칸 12/16+)를 곡 안 순위대로 같은 BPM대 사람 줄당 노트 분포(150 이하 얇은 1.81 / 중간 2.73, "
                          "150~180 1.57 / 2.44, 180~200 1.67 / 2.25, 200+ 1.49 / 2.00)까지 올림, 건반만 더하고 빼지 않음. 상한 = 그 곡 지금 상위 10%% 두께·마디 노트 수 "
@@ -2299,7 +2299,7 @@ def main() -> None:
                          "2박 넘게 이어지면 그 박을 떨림 속도 격자(봉우리 위치가 더 잘 맞는 24분 또는 32분, 간격 40ms 미만이면 24분)로 다 채우고 "
                          "격자 밖 줄은 뺌, 구간 밀도 분포(--dens-shape)는 안 뺌, 마지막에 사람 24·32분 연속 모양으로 놓고 줄 두께는 사람 떨림 구간처럼 "
                          "(patch105: 박 머리 단타/2/3+ 34/35/31%%, 16분 칸 60/30/10%%, 사이 88/11/1%%). "
-                         "치고 쉬기로 비운 박은 건너뜀. DIAVOLO 드르릉·고음 떨림이 임계값 아래(0.2~0.4)라 빠지던 것. 0 = 끔(기본), 1 = 기준")
+                         "치고 쉬기로 비운 박은 건너뜀. 드르릉, 고음 떨림이 임계값 아래(0.2~0.4)라 빠지던 것. 0 = 끔(기본), 1 = 기준")
     ap.add_argument("--shape-run", type=float, default=1.0,
                     help="같은 모양 이어짐 끊기(patch101): 16분 폭타 안 이웃 동시치기가 같은 모양(평행이동 무시, 예: 36 57 46 35)으로 3줄 넘게 이어지는 "
                          "사슬이 폭타 1000줄당 사람 중앙값(9.6곳)보다 많으면 셋째 줄부터, 앞 줄과 같은 모양 비율이 사람 75%% 곡(21%%)보다 높으면 "
@@ -2340,10 +2340,10 @@ def main() -> None:
                          "(사람 12칸+ 마디 16칸 64 / 14~15 17 / 12~13 19%%, 기본 1, 0이면 전부 16칸까지 채움)")
     ap.add_argument("--placer-beat", type=float, default=3.0,
                     help="자리 모델이 정확히 한 박 전 줄과 같은 조합을 고르는 것 억제 세기: 최근 같은 두께 줄 중 그 비율이 사람"
-                         "(얇은 폭타 14.5%%, 두꺼운 폭타 7.5%%)보다 높으면 그 조합을 덜 고름, patch92부터 두 줄 전과 같은 조합도(사람 6%%), patch94부터 16분 단타 계단(1234, 사람 6%% / 생성 EOS p93 50%%)도 (생성 EOS 40%% / 16%%, 기본 3, 0이면 끔)")
+                         "(얇은 폭타 14.5%%, 두꺼운 폭타 7.5%%)보다 높으면 그 조합을 덜 고름, 두 줄 전과 같은 조합도(사람 6%%), 16분 단타 계단(1234, 사람 6%% / 생성 50%%)도 (생성 40%% / 16%%, 기본 3, 0이면 끔)")
     ap.add_argument("--stream-fill", type=float, default=11.0,
                     help="16분 칸이 이 수(16칸 중) 이상 찬 마디는 빈 16분 칸을 채워 폭타를 끊기지 않게 "
-                         "(사람 lv20 바쁜 마디 16칸 다 참 48%%, 생성 p71 3%%, 기본 11, 0이면 끔)")
+                         "(사람 ★20 바쁜 마디 16칸 다 참 48%%, 생성 3%%, 기본 11, 0이면 끔)")
     ap.add_argument("--beat-motif", type=float, default=1.0,
                     help="리듬이 같은 앞 박의 줄별 건반 수를 따라가 박 단위 반복을 만드는 세기 (사람 1박 전 같음 27~32%%, 일부는 줄 모양까지). 0이면 끔")
     ap.add_argument("--eighth-shape", type=float, default=1.0,
@@ -2365,23 +2365,23 @@ def main() -> None:
                     help="32분 사이 칸 줄이 앞뒤 32분 이웃 줄이 더 많이 쓰는 손(1~3번 왼손 / 5~7번 오른손) 쪽에만 있으면 "
                          "이 확률로 반대 손 건반으로 옮김 (4번은 가운데로 안 셈, 연타 금지 지킴). 0이면 끔")
     ap.add_argument("--off-match", type=float, default=1.0,
-                    help="16분 연타 속 뒷자리(16분 사이 칸) 줄 건반 수를 lv20 분포(1개 36%% / 2개 47%% / 3개 15%%)로 올림. "
+                    help="16분 연타 속 뒷자리(16분 사이 칸) 줄 건반 수를 ★20 분포(1개 36%% / 2개 47%% / 3개 15%%)로 올림. "
                          "양옆이 큰 동시치기인 단타부터 (큰동치-단타 교대 줄임). 0이면 끔")
     ap.add_argument("--on8-match", type=float, default=1.0,
-                    help="16분 연타 속 8분 자리 줄 건반 수를 lv20 분포(1개 4%% / 2개 24%% / 3개 44%% / 4개 24%% / 5+ 4%%)로 내림. "
+                    help="16분 연타 속 8분 자리 줄 건반 수를 ★20 분포(1개 4%% / 2개 24%% / 3개 44%% / 4개 24%% / 5+ 4%%)로 내림. "
                          "많은 쪽에서만 하나씩 뺌 (1 = 분포 그대로, 0.5 = 절반만, 0 = 끔). 큰동치-단타 교대가 몰리는 것 방지")
     ap.add_argument("--stream-cap", type=float, default=0.25,
                     help="16분 연타 속 8분 자리(박·8분 뒷박)의 4건반 이상 동시치기에서 건반마다 이 확률로 덜어냄 "
                          "(덜 개수는 정하지 않음, 최소 1건반 남김, 축 건반부터). 0이면 끔")
     ap.add_argument("--eighth-same", type=float, default=0.6,
                     help="8비트 동시치기 구간에서 앞뒤 줄과 같은 소리인데 겹친 건반도 이 확률로 옮김. "
-                         "lv20 기준: 같은 소리여도 겹침 30%%. 0이면 같은 소리 반복은 그대로")
+                         "★20 기준: 같은 소리여도 겹침 30%%. 0이면 같은 소리 반복은 그대로")
     ap.add_argument("--pillar-fix", type=float, default=0.3,
                     help="16분 연타 속 8분 자리 줄이 8분 전/1박 전 줄과 같은 건반(1 _ 1 _ 기둥)이면 이 확률로 빈 건반으로 옮김. "
-                         "사람: 8분 전 줄과 겹침 56%%, 생성 flicknote 88%%. 0이면 끔")
+                         "사람: 8분 전 줄과 겹침 56%%, 생성 88%%. 0이면 끔")
     ap.add_argument("--eighth-overlap", type=float, default=0.7,
                     help="8비트 동시치기 구간(16분 없는 8분)에서 앞뒤 줄과 겹치는 건반을 이 확률로 겹치지 않는 자리로. "
-                         "사람: 겹침 24%%, 생성 flicknote 53%%. 0이면 끔")
+                         "사람: 겹침 24%%, 생성 53%%. 0이면 끔")
     ap.add_argument("--eighth-big", type=float, default=0.0,
                     help="8비트 동시치기 구간에서 이 확률로 건반을 하나 더 (또 이 확률이면 하나 더, --max-chord까지). "
                          "앞뒤 줄에 없는 건반만 써서 1357 / 246처럼. 0이면 끔")
@@ -2396,7 +2396,7 @@ def main() -> None:
                     help="스크래치 자리 모델로 레인 모델의 스크래치를 다시 놓을 정도 (0~1, 기본 1 = 전부 다시). 개수는 그대로 두되 "
                          "--scratch-add가 더 많으면 그 수까지. 0이면 레인 모델이 고른 스크래치 자리 그대로, 모자라면 박 위치 가중치로 채움)")
     ap.add_argument("--scratch-add", type=float, default=0.9,
-                    help="스크래치가 마디당 이 줄 수보다 적으면 저·중음이 센 줄에 채움 (lv20 평균 0.96, 기본 0.9). 0이면 끔")
+                    help="스크래치가 마디당 이 줄 수보다 적으면 저·중음이 센 줄에 채움 (★20 평균 0.96, 기본 0.9). 0이면 끔")
     ap.add_argument("--chord-style", type=float, default=0.5,
                     help="반 마디마다 8분 자리 동시치기 성격(건반 수+간격)을 정하고 이 확률로 다음 반 마디에도 유지 (사람처럼 같은 모양 이어가다 전환). 0이면 끔")
     ap.add_argument("--spread-chords", type=float, default=0.3,
@@ -2406,7 +2406,7 @@ def main() -> None:
     ap.add_argument("--accent3-phase", type=int, default=-1,
                     help="--accent3-at의 강세 위치(0~2). -1이면 저·중음 어택으로 자동. 묶음이 한 칸 밀려 보이면 다른 값으로")
     ap.add_argument("--accent3-auto", type=float, default=0.0,
-                    help="점8분 묶음 자동 찾기 (0 = 끔, 0.5 = 기준). 실제 곡(Chronomia)에서는 하이햇 때문에 잘 못 찾아 기본 끔")
+                    help="점8분 묶음 자동 찾기 (0 = 끔, 0.5 = 기준). 실제 곡에서는 하이햇 때문에 잘 못 찾아 기본 끔")
     ap.add_argument("--no-sparse-spread", action="store_true",
                     help="성긴 구간 단타가 한 건반(주로 4번)에 몰리는 것을 푸는 보정을 끈다")
     ap.add_argument("--no-section-fix", action="store_true",

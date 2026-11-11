@@ -7,19 +7,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-# 패턴 제작자 규칙: yumether 패턴은 전부 좋은 패턴 (7yum / 7yume / yumether)
-GOOD_PATTERNS = [
-    "yumether", "7yum",
-    # 사용자가 고른 좋은 패턴
-    "_chronomia_presea", "_chronomia_sa.",
-    "yaku_7bt3maniaq", "03_light_of_white_magic_ml7", "air7god", "_morion_7yu",
-    "_nnms_99_hardest", "crazybitsa", "crazybits_wc",
-    "dive_air02galaxy", "we_are_the_hiiii", "xecus_x_z", "_f_remake",
-    "_goodtek_sa__f", "_04_conflict.infelno", "_ele_butter_70",
-    "fuxxing_your_brain_yuz", "_lemuria_lt",
-    # 뺌: 묶음 교대(1357/246 등 반복)가 많은 곡
-    #   whiteout_r, messier20, _aeuro_infelno, angeldust7m_
-]
+# 좋은 패턴으로 볼 파일 이름 조각. 공개 저장소에서는 비워 두고, --good-list 파일(한 줄에 하나)로 넣는다.
+GOOD_PATTERNS: list[str] = []
 
 
 def load_patterns(extra_file: str | None = None) -> list[str]:
