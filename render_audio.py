@@ -2,9 +2,9 @@
 [학습 준비, 생성에서는 오디오 읽기에 씀] BMS 패턴의 키음 이벤트를 합쳐서 곡 오디오(WAV)로 렌더링한다.
 
 사용 예:
-    python render_audio.py "data\\bms\\[SHIKI] Air\\air7god.bme" --out data\\audio
-    -> data\\audio\\[SHIKI] Air\\air7god.wav          (곡 오디오, 학습용)
-       data\\audio\\[SHIKI] Air\\air7god_clicks.wav   (노트 위치에 클릭음을 얹은 검증용)
+    python render_audio.py "data\\bms\\곡_폴더\\패턴.bme" --out data\\audio
+    -> data\\audio\\곡_폴더\\패턴.wav          (곡 오디오, 학습용)
+       data\\audio\\곡_폴더\\패턴_clicks.wav   (노트 위치에 클릭음을 얹은 검증용)
 
 검증용 파일을 들으면서 클릭음이 곡의 드럼/멜로디와 맞는지 확인하면 된다.
 """

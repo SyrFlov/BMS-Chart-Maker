@@ -550,8 +550,8 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
                     ok_fg, allow_fg, rep_fg = fine_gate_beat(beat_info["beat_div"], beat_info["beat_gain"], bpm, fine_bpm, g0=g0_fb)
                 else:
                     ok_fg, allow_fg, rep_fg = fine_gate(beat_info["beat_div"], fine_grid)
-                # 악절 안 같은 박 자리에서 되풀이되는 셋잇단16분(RATATA 훅 2박째 '따 다다닥')은 옆 박과 상관없이 셋잇단으로
-                # 32분도 같은 방식(RATATA 훅 4박째 끝 32분)이지만 오판이 많아 --fill32를 기본(0.25)보다 낮췄을 때만
+                # 악절 안 같은 박 자리에서 되풀이되는 셋잇단16분은 옆 박과 상관없이 셋잇단으로
+                # 32분도 같은 방식이지만 오판이 많아 --fill32를 기본(0.25)보다 낮췄을 때만
                 per_div = {}
                 divs_p = tuple(d_ for d_ in (6, 8) if any(p[0] == d_ for p in beat_pats_s)
                                and 60.0 / bpm / d_ * 1000.0 >= snap_min_ms
@@ -676,7 +676,6 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
             n_guard = 0
             if stream_hole > 0 and drop.any():
                 # 앞뒤 16분, 8분 자리가 다 있는 폭타 속에서 한 칸만 비게 되는 줄은 곡 하위 stream_hole%만 뺌
-                # (폭타 1000줄당 한 칸 빈 곳: 사람 중앙값 36 / 생성 The Hole 101)
                 ss_ = set(slot.tolist())
                 inner = np.array([all((int(x) + d) in ss_ for d in (-24, -12, 12, 24)) for x in slot])
                 hole_keep = drop & inner & (pk >= np.percentile(pk, stream_hole))   # 'guard' 이름이 --guard 인자를 덮어써서 바꿈
@@ -770,13 +769,13 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
                       f"{len(add_)}개를 채움 (사람 lv20 바쁜 마디 16칸 다 참 48% / 생성 p71 3%)" + grade_)
         def _row_peak_p():
             # 줄마다 노트 시각 모델 확률 = 원래 봉우리 프레임 앞뒤 3프레임 중 최대 (_rows.csv와 같은 격자 이동 보정).
-            # 예전에는 격자에 붙인 시각에서 읽어서, 늦게 찍히는 곡(RATATA 훅 뒷자리 20~30ms 늦음)은 확실한 소리(0.7~0.97)도
-            # 낮게 읽혀 '16분 뒷자리가 약한 악절'로 뽑힘 -> 훅 049~056마디가 8비트로 바뀜 (--stream-target, --stream-break)
+            # 예전에는 격자에 붙인 시각에서 읽어서, 늦게 찍히는 곡은 확실한 소리(0.7~0.97)도
+            # 낮게 읽혀 '16분 뒷자리가 약한 악절'로 뽑힘 -> 8비트로 잘못 바뀜 (--stream-target, --stream-break)
             fr_ = np.asarray(frames, dtype=np.int64)
             return np.max([probs[np.clip(fr_ + d_, 0, len(probs) - 1)] for d_ in range(-3, 4)], axis=0)
         def _fine_cnt():
             # 4마디 안 같은 박 자리(1~4박째)에 16분 칸 밖(24, 32, 셋잇단) 리듬이 되풀이되는 마디 - 리듬이 핵심이라 8비트로 안 바꿈
-            # (RATATA 훅: 050~053마디 2박째마다 '따 다다닥'). 흩어진 한두 박(약한 32분 채움 등)은 안 셈 (사용자 고른 방법 2)
+            # 흩어진 한두 박(약한 32분 채움 등)은 안 셈
             B_ = 60.0 / bpm
             q48 = np.rint(np.asarray(t_chart) / B_ * 48).astype(np.int64)
             fb_ = set((q48[q48 % 12 != 0] // 48).tolist())
@@ -982,7 +981,7 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
             rp_ = _row_peak_p()                # 격자에 붙이며 옮긴 줄도 봉우리 확률로
             sb_meas = stream_break_pick(t_chart, rp_, bpm, int(stream_break), mel=mel, pad=pad, fine_cnt=_fine_cnt(),
                                         skip=set(lad_plan))   # 사다리로 얇게 한 마디는 이미 끊긴 것으로
-            # 폭타 끊기는 다시 8비트 동시치기로 (사다리로 끊으면 EOS 053, 054처럼 박 강세가 사라짐)
+            # 폭타 끊기는 다시 8비트 동시치기로 (사다리로 끊으면 박 강세가 사라짐)
             if sb_meas:
                 if not m_rank and mel is not None:
                     from sound16_ctl import meas_rank
@@ -1530,7 +1529,7 @@ def chart_from_probs(probs: np.ndarray, stereo: np.ndarray, sr0: int, out_dir, n
             prot_ds = _srw(t_chart, bpm) | trw_ds
             mk_ds = None
             if mel_keep > 0:
-                # 멜로디, 보컬, 베이스 어택이 센 줄(곡 안 위쪽 40%)은 구간 밀도 분포가 안 뺌 (Glide 019~028 멜로디 엇박)
+                # 멜로디, 보컬, 베이스 어택이 센 줄(곡 안 위쪽 40%)은 구간 밀도 분포가 안 뺌
                 from melkeep_ctl import protect_rows, row_melodic
                 sc_ds, src_ds = row_melodic(fr_, None, _stems_mk())
                 if sc_ds is not None:

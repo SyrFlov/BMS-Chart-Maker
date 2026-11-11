@@ -3,7 +3,7 @@
 
 사용:
     python human_agree.py --bms-dir data/bms data/bms_removed
-    python human_agree.py --bms-dir "D:/bms/Chronomia"          # 곡 폴더 하나만
+    python human_agree.py --bms-dir "D:/bms/곡_폴더"          # 곡 폴더 하나만
 """
 from __future__ import annotations
 

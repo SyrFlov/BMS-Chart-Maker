@@ -114,7 +114,7 @@ def split_of(song_key: str, val_ratio: float, test_ratio: float) -> str:
 
 
 def base_title(title: str) -> str:
-    """패턴 이름 꼬리를 떼고 곡 이름만: 'Air -Gorilla-' / 'Chronomia [SA]' / 'xx (ANOTHER)' -> 'air' / 'chronomia' / 'xx'"""
+    """패턴 이름 꼬리를 떼고 곡 이름만: 'Song -Sub-' / 'Song [SA]' / 'song (ANOTHER)' -> 'song'"""
     t = title or ""
     for _ in range(3):
         t = re.sub(r"\s*(\[[^\]]*\]|\([^)]*\)|<[^>]*>|-[^-]+-|～[^～]+～|~[^~]+~)\s*$", "", t.strip())

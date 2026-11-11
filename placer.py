@@ -271,13 +271,13 @@ def place_masks(model, frames, masks8, codes, acc, jack_ms: float = 100.0, tempe
     jf = jack_ms / 1000.0 * FPS
     # beat_pen: 정확히 한 박 전 줄과 같은 조합 고르기 억제. 사람 277곡 폭타 마디: 한 박 전과 똑같은 줄
     # 얇은 폭타(줄당 1.6개 미만) 14.5% / 두꺼운 폭타 7.5%. 최근 beat_win줄(같은 두께 줄) 비율이
-    # 목표보다 높으면 그 조합 로그확률에서 beat_pen을 뺌. EOS numpy 재현: 3 -> 얇은 10~13% / 두꺼운 7~8%.
+    # 목표보다 높으면 그 조합 로그확률에서 beat_pen을 뺌.
     copied = np.zeros(n, dtype=bool)
     has_b = np.zeros(n, dtype=bool)
     copied2 = np.zeros(n, dtype=bool)            # 그 줄이 두 줄 전과 같은가 (결정된 줄만)
     has2 = np.zeros(n, dtype=bool)
     # 16분 단타 연속에서 계단(1234, 7654처럼 한 칸씩 같은 방향 4줄+)이 이어지는가 (결정된 줄만)
-    # 사람 277곡 단타 16분 연속 줄 중 계단 줄 곡별 중앙값 6%(상위 25% 24%), 생성 EOS 50% - 모델이 한번 계단을 타면 계속 탐(시드별 0~58%)
+    # 사람 277곡 단타 16분 연속 줄 중 계단 줄 곡별 중앙값 6%(상위 25% 24%), 생성 50% - 모델이 한번 계단을 타면 계속 탐(시드별 0~58%)
     on_stair = np.zeros(n, dtype=bool)
     is_single = np.zeros(n, dtype=bool)
     step_f = beat_frames * 0.3 if beat_frames > 0 else 12.0

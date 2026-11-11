@@ -3,7 +3,7 @@
 
 사용:
     python regen.py --songs all --extra "--guard 1" --name GUARD     울타리 버전을 <곡>_GUARD.bms로 따로
-    python regen.py --songs barijung,Glide                           지금 설정 그대로 다시 (원래 패턴을 덮어씀)
+    python regen.py --songs 곡1,곡2                           지금 설정 그대로 다시 (원래 패턴을 덮어씀)
 """
 from __future__ import annotations
 

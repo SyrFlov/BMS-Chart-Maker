@@ -8,7 +8,7 @@
 가장 잘 겹치는 시간 차이를 찾는다.
 
 사용:
-    python align.py input\\Chronomia.mp3 data\\audio\\Chrono\\_chronomia_L.wav
+    python align.py 곡.mp3 키음_믹스.wav
     -> "A가 B보다 +37.0ms 늦음" 같은 결과
 """
 from __future__ import annotations

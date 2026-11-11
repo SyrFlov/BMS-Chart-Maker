@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import numpy as np
 
-TREM_RATE = 16.0          # 초당 봉우리 수 기준 (strength 1). DIAVOLO 160: 박당 6개
+TREM_RATE = 16.0          # 초당 봉우리 수 기준 (strength 1).
 TREM_LOW = 0.15           # 봉우리 바닥 (note_diag 후보와 같음)
 RES = 96                  # 박당 칸 (24분 16칸마다, 32분 12칸마다)
 MIN_STEP_MS = 40.0        # 떨림 격자 최소 간격: 이보다 촘촘한 32분(188BPM+)은 24분으로

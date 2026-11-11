@@ -17,7 +17,7 @@ GOOD_PATTERNS = [
     "dive_air02galaxy", "we_are_the_hiiii", "xecus_x_z", "_f_remake",
     "_goodtek_sa__f", "_04_conflict.infelno", "_ele_butter_70",
     "fuxxing_your_brain_yuz", "_lemuria_lt",
-    # 뺌: 묶음 교대(1357/246 등 반복)가 많은 곡 -> presea 쪽 스타일로 간다
+    # 뺌: 묶음 교대(1357/246 등 반복)가 많은 곡
     #   whiteout_r, messier20, _aeuro_infelno, angeldust7m_
 ]
 
