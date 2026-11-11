@@ -1,0 +1,12 @@
+# 생성에 필요한 것
+numpy
+scipy
+torch
+soundfile
+tqdm
+# 음원 분리를 쓸 때만
+demucs
+# 스크래치 자리 모델을 다시 학습할 때만
+scikit-learn
+# exe로 묶을 때만
+pyinstaller

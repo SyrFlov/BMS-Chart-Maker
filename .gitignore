@@ -1,0 +1,37 @@
+# 데이터와 음원 (올리지 않음)
+data/
+input/
+downloads/
+processed/
+*.zip
+*.csv
+*.npz
+*.wav
+*.mp3
+*.flac
+*.ogg
+
+# 학습된 모델 파일 (Releases에 따로 올림)
+checkpoints/
+*.pt
+
+# 생성 결과와 작업 폴더
+output/
+output_kaggle/
+out_*/
+cmp_*/
+logs/
+build/
+dist/
+docs/
+comment_clean/
+submit_tool/
+web_tools/
+
+# 개발 도구
+__pycache__/
+*.pyc
+.serena/
+.vscode/
+CLAUDE.md
+*.ipynb
